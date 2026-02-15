@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch to Code - Result</title>
+    
+    <script id="data-html" type="application/json">{{ generated_html | tojson | safe }}</script>
+    <script id="data-css" type="application/json">{{ generated_css | tojson | safe }}</script>
+    <script id="data-elements" type="application/json">{{ editable_elements | tojson | safe }}</script>
+    
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+        h1 {
+            text-align: center; 
+            margin-top: 0;
+            margin-bottom: 20px;
+            font-weight: 600;
+            color: #1c1c1e;
+        }
+        .main-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            max-width: 1800px;
+            margin: auto;
+        }
+        .preview-container, .editor-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            display: flex;
+            flex-direction: column;
+            min-height: 400px; 
+        }
+        .preview-container {
+            flex: 2;
+            min-width: 320px;
+        }
+        .editor-container {
+            flex: 1;
+            min-width: 320px;
+            max-height: 85vh;
+        }
+        h2 {
+            font-size: 1.5rem;
+            font-weight: 600;
+            padding: 20px 20px 10px 20px;
+            margin: 0;
+            border-bottom: 1px solid #eee;
+        }
+        #preview-area {
+            border: 2px solid #e5e5e7;
+            border-radius: 6px;
+            height: 70vh;
+            flex-grow: 1;
+            overflow: hidden;
+            margin: 20px;
+        }
+        #preview-iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            background: white;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e5e7;
+            padding: 0 20px;
+        }
+        .tab-button {
+            padding: 12px 18px;
+            cursor: pointer;
+            background-color: transparent;
+            border: none;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #6c6c72;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+        .tab-button.active {
+            color: #007aff;
+            border-bottom-color: #007aff;
+        }
+        .tab-content {
+            display: none;
+            flex-grow: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        
+        /* Editor Fields */
+        .editor-field {
+            margin-bottom: 18px;
+        }
+        .editor-field label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #333;
+            font-size: 0.9rem;
+            text-transform: capitalize;
+        }
+        .editor-field input[type="text"] {
+            width: 100%;
+            padding: 10px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        .editor-field input[type="text"]:focus {
+            border-color: #007aff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.2);
+            outline: none;
+        }
+        .editor-field input[type="file"] {
+            font-size: 0.9rem;
+        }
+        #editor-fields p {
+            color: #6c6c72;
+        }
+
+        /* Code View */
+        pre {
+            position: relative;
+            margin: 0;
+            background-color: #2d2d2d;
+            color: #f1f1f1;
+            font-family: 'SF Mono', 'Menlo', 'Consolas', monospace;
+            font-size: 0.85rem;
+            padding: 15px;
+            white-space: pre-wrap;
+            word-break: break-all;
+            box-sizing: border-box;
+            border-radius: 6px;
+            max-height: 60vh;
+            overflow: auto;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 6px 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            z-index: 10;
+            opacity: 0.8;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover {
+            opacity: 1;
+        }
+        .copy-btn.copied {
+            background-color: #28a745;
+        }
+        
+        /* Footer Buttons */
+        .footer-actions {
+            padding: 20px;
+            text-align: center;
+            border-top: 1px solid #eee;
+            margin-top: auto;
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+        }
+        .action-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: background-color 0.2s;
+        }
+        .action-btn:hover {
+            background-color: #218838;
+        }
+        .action-btn.secondary {
+            background-color: #6c757d;
+        }
+        .action-btn.secondary:hover {
+            background-color: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <h1>Sketch to Code Result</h1>
+    <div class="main-container">
+
+        <!-- Left Column: Live Preview -->
+        <div class="preview-container">
+            <h2>Live Preview</h2>
+            <div id="preview-area">
+                <iframe id="preview-iframe" title="Visual Preview"></iframe>
+            </div>
+        </div>
+
+        <!-- Right Column: Editor & Code Tabs -->
+        <div class="editor-container">
+            <div class="tabs">
+                <button class="tab-button active" data-tab="editor">Editor</button>
+                <button class="tab-button" data-tab="html">HTML</button>
+                <button class="tab-button" data-tab="css">CSS</button>
+            </div>
+
+            <!-- Tab 1: Dynamic Editor Fields -->
+            <div id="editor" class="tab-content active">
+                <div id="editor-fields">
+                    <!-- Editor fields will be inserted here by JS -->
+                </div>
+            </div>
+
+            <!-- Tab 2: HTML Code View -->
+            <div id="html" class="tab-content">
+                <pre><button class="copy-btn" data-copy="html-code">Copy</button><code id="html-code"></code></pre>
+            </div>
+
+            <!-- Tab 3: CSS Code View -->
+            <div id="css" class="tab-content">
+                <pre><button class="copy-btn" data-copy="css-code">Copy</button><code id="css-code"></code></pre>
+            </div>
+
+            <!-- Footer: Download & Try Again -->
+            <div class="footer-actions">
+                <button class="action-btn" id="download-btn">Download HTML</button>
+                <a href="/" class="action-btn secondary">Try Another</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            // --- 1. GET DATA FROM HTML "DATA ISLANDS" ---
+            let initial_html = "";
+            let generated_css = "";
+            let editable_elements = [];
+
+            try {
+                initial_html = JSON.parse(document.getElementById('data-html').textContent);
+                generated_css = JSON.parse(document.getElementById('data-css').textContent);
+                editable_elements = JSON.parse(document.getElementById('data-elements').textContent);
+            } catch (e) {
+                console.error("Error parsing data from Flask:", e);
+                initial_html = "<h1>Error loading generated code.</h1>";
+            }
+
+            // --- 2. GET ALL THE DOM ELEMENTS WE NEED ---
+            const iframe = document.getElementById('preview-iframe');
+            const editorFieldsContainer = document.getElementById('editor-fields');
+            const htmlCodeElement = document.getElementById('html-code');
+            const cssCodeElement = document.getElementById('css-code');
+            const downloadBtn = document.getElementById('download-btn');
+
+            // --- 3. DEFINE CORE FUNCTIONS ---
+
+            /**
+             * [NEW FUNCTION] A simple HTML code formatter.
+             * This adds indentation and newlines to make the code readable.
+             */
+            function formatHtml(html) {
+                const tab = '  '; // Two spaces for indentation
+                let result = '';
+                let indent = '';
+
+                // Split the HTML string by tags, but keep the tags
+                html.split(/(?=<)/).forEach(element => {
+                    let trimmedElement = element.trim();
+                    if (!trimmedElement) return; // Skip empty lines
+
+                    if (trimmedElement.match(/^<\/\w/)) {
+                        // This is a closing tag, decrease indent *before* adding it
+                        indent = indent.substring(tab.length);
+                    }
+                    
+                    // Add the line with current indentation
+                    result += indent + trimmedElement + '\r\n';
+
+                    if (trimmedElement.match(/^<[^\/]/) && !trimmedElement.match(/\/>$/) && 
+                        !trimmedElement.match(/<meta|<link|<br|<hr|<img/)) {
+                        // This is an opening tag (and not self-closing), increase indent *after* adding it
+                        indent += tab;
+                    }
+                });
+
+                return result.trim();
+            }
+
+            /**
+             * [UPDATED FUNCTION] Updates the 'HTML' code tab.
+             * Now uses formatHtml() to make the code pretty.
+             */
+            function updateCodeView() {
+                if (iframe.contentWindow?.document?.documentElement) {
+                    const liveHtml = iframe.contentWindow.document.documentElement.outerHTML;
+                    // Use textContent to safely display the code as text
+                    // NOW we format it first!
+                    htmlCodeElement.textContent = formatHtml(liveHtml);
+                }
+            }
+
+            /**
+             * [EDITOR] Builds the input fields in the 'Editor' tab.
+             * (This function is unchanged)
+             */
+            function createEditorFields() {
+                editorFieldsContainer.innerHTML = '';
+                
+                if (!editable_elements || editable_elements.length === 0) {
+                    editorFieldsContainer.innerHTML = '<p>No editable elements were identified.</p>';
+                    return;
+                }
+
+                editable_elements.forEach(element => {
+                    const fieldDiv = document.createElement('div');
+                    fieldDiv.className = 'editor-field';
+                    
+                    const label = document.createElement('label');
+                    label.setAttribute('for', element.id);
+                    label.textContent = `${element.type} (${element.id})`;
+                    
+                    let input;
+                    if (element.type === 'image') {
+                        input = document.createElement('input');
+                        input.type = 'file';
+                        input.id = element.id;
+                        input.accept = 'image/*';
+                        
+                        input.addEventListener('change', (event) => {
+                            const file = event.target.files[0];
+                            if (!file) return;
+                            
+                            const reader = new FileReader();
+                            reader.onload = (e) => {
+                                const dataUrl = e.target.result;
+                                const targetElement = iframe.contentWindow.document.querySelector(`[data-editable-id="${element.id}"]`);
+                                if (targetElement) {
+                                    targetElement.src = dataUrl;
+                                    updateCodeView();
+                                }
+                            };
+                            reader.readAsDataURL(file);
+                        });
+                        
+                    } else {
+                        input = document.createElement('input');
+                        input.type = 'text';
+                        input.id = element.id;
+                        input.value = element.default_content;
+                        
+                        input.addEventListener('keyup', (event) => {
+                            const targetElement = iframe.contentWindow.document.querySelector(`[data-editable-id="${element.id}"]`);
+                            if (targetElement) {
+                                targetElement.textContent = event.target.value;
+                                updateCodeView();
+                            }
+                        });
+                    }
+                    
+                    fieldDiv.appendChild(label);
+                    fieldDiv.appendChild(input);
+                    editorFieldsContainer.appendChild(fieldDiv);
+                });
+            }
+
+            // --- 4. SET UP EVENT LISTENERS ---
+
+            // Tab switching logic (unchanged)
+            document.querySelector('.tabs').addEventListener('click', (e) => {
+                if (e.target.classList.contains('tab-button')) {
+                    const tabName = e.target.dataset.tab;
+                    document.querySelectorAll('.tab-button').forEach(btn => btn.classList.remove('active'));
+                    e.target.classList.add('active');
+                    document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                    document.getElementById(tabName).classList.add('active');
+                    if (tabName === 'html') {
+                        updateCodeView();
+                    }
+                }
+            });
+
+            // [UPDATED] Download button now downloads the *formatted* code
+            downloadBtn.addEventListener('click', () => {
+                const liveHtml = iframe.contentWindow.document.documentElement.outerHTML;
+                // Format the HTML before creating the Blob
+                const formattedHtml = formatHtml(liveHtml);
+                const blob = new Blob([formattedHtml], { type: 'text/html' });
+                
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = 'generated-page.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(a.href);
+            });
+
+            // [COPY] Copy buttons logic (unchanged)
+            document.querySelectorAll('.copy-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const codeElementId = btn.dataset.copy;
+                    // This works because textContent gets the formatted text we just set
+                    const codeToCopy = document.getElementById(codeElementId).textContent;
+                    
+                    navigator.clipboard.writeText(codeToCopy).then(() => {
+                        const originalText = btn.textContent;
+                        btn.textContent = 'Copied!';
+                        btn.classList.add('copied');
+                        setTimeout(() => {
+                            btn.textContent = originalText;
+                            btn.classList.remove('copied');
+                        }, 2000);
+                    }).catch(err => {
+                        console.error('Failed to copy: ', err);
+                    });
+                });
+            });
+
+            // --- 5. INITIALIZE THE PAGE ---
+            
+            iframe.srcdoc = initial_html;
+            
+            iframe.onload = function() {
+                try {
+                    createEditorFields();
+                    cssCodeElement.textContent = generated_css; // CSS is usually short, no formatting needed
+                    updateCodeView(); // This will now call the formatted version
+                    
+                    if (generated_css) {
+                        const styleEl = iframe.contentWindow.document.createElement('style');
+                        styleEl.textContent = generated_css;
+                        iframe.contentWindow.document.head.appendChild(styleEl);
+                    }
+                } catch (e) {
+                    console.error("Error during iframe onload setup:", e);
+                    editorFieldsContainer.innerHTML = '<p>An error occurred while building the editor.</p>';
+                }
+                iframe.onload = null; 
+            };
+
+        });
+    </script>
+</body>
+</html>

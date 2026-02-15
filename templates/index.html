@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sketch to Code</title>
+    <!-- Using a modern font from Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa; /* Lighter background */
+            color: #212529;
+        }
+        .container {
+            background: #ffffff;
+            padding: 40px 50px;
+            border-radius: 12px;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.08);
+            text-align: center;
+            max-width: 450px;
+            width: 100%;
+            border: 1px solid #e9ecef;
+        }
+        h1 {
+            color: #343a40;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        p {
+            color: #6c757d;
+            margin-bottom: 30px;
+            font-size: 1.1rem;
+        }
+        
+        /* Style for the file input */
+        .file-upload-wrapper {
+            position: relative;
+            width: 100%;
+            height: 150px;
+            border: 2px dashed #0d6efd;
+            border-radius: 8px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background-color: #fdfdff;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+        .file-upload-wrapper:hover {
+            background-color: #f8faff;
+            border-color: #0b5ed7;
+        }
+        .file-upload-wrapper input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+        .file-upload-text {
+            color: #0d6efd;
+            font-weight: 500;
+            font-size: 1.1rem;
+        }
+        .file-upload-hint {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-top: 8px;
+        }
+        
+        /* Style for the submit button */
+        button {
+            margin-top: 30px;
+            padding: 14px 20px;
+            border: none;
+            background: linear-gradient(135deg, #0d6efd, #0b5ed7);
+            color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            width: 100%;
+            transition: transform 0.2s, box-shadow 0.2s;
+            box-shadow: 0 4px 15px rgba(13, 110, 253, 0.2);
+        }
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(13, 110, 253, 0.3);
+        }
+        button:active {
+            transform: translateY(0);
+        }
+
+        /* Loading Spinner (hidden by default) */
+        #loading-spinner {
+            display: none;
+            margin-top: 25px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0d6efd;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Sketch to Code AI</h1>
+        <p>Upload your UI sketch to begin.</p>
+        
+        <!-- The form submits the file to the /upload route -->
+        <form id="upload-form" action="/upload" method="post" enctype="multipart/form-data">
+            
+            <div class="file-upload-wrapper">
+                <input type="file" id="sketch_file_input" name="sketch_file" accept="image/*" required>
+                <span id="file-upload-display-text">
+                    <span class="file-upload-text">Click to browse or drag file here</span>
+                    <span class="file-upload-hint">PNG, JPG, or WEBP</span>
+                </span>
+            </div>
+            
+            <button id="generate-button" type="submit">Generate Code</button>
+        </form>
+        
+        <!-- Loading spinner element -->
+        <div id="loading-spinner"></div>
+    </div>
+
+    <script>
+        const uploadForm = document.getElementById('upload-form');
+        const fileInput = document.getElementById('sketch_file_input');
+        const fileDisplayText = document.getElementById('file-upload-display-text');
+        const generateButton = document.getElementById('generate-button');
+        const loadingSpinner = document.getElementById('loading-spinner');
+
+        // Show the selected filename
+        fileInput.addEventListener('change', function() {
+            if (fileInput.files.length > 0) {
+                fileDisplayText.querySelector('.file-upload-text').textContent = fileInput.files[0].name;
+                fileDisplayText.querySelector('.file-upload-hint').textContent = `File size: ${(fileInput.files[0].size / 1024).toFixed(1)} KB`;
+            } else {
+                fileDisplayText.querySelector('.file-upload-text').textContent = 'Click to browse or drag file here';
+                fileDisplayText.querySelector('.file-upload-hint').textContent = 'PNG, JPG, or WEBP';
+            }
+        });
+        
+        // Show loading spinner on form submission
+        uploadForm.addEventListener('submit', function() {
+            // Check if a file is actually selected
+            if (fileInput.files.length > 0) {
+                generateButton.style.display = 'none'; // Hide the button
+                loadingSpinner.style.display = 'block'; // Show the spinner
+            }
+        });
+    </script>
+</body>
+</html>

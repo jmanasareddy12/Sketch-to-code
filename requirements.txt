@@ -1,0 +1,4 @@
+flask
+ultralytics
+google-generativeai
+python-dotenv
