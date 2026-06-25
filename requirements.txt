@@ -3,3 +3,4 @@ ultralytics
 google-generativeai
 python-dotenv
 gunicorn
+opencv-python-headless
