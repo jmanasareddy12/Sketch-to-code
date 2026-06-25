@@ -26,7 +26,7 @@ else:
 # [MODEL LOADING] Load your trained YOLO model
 try:
     # Ensure 'best.pt' is in the same directory as app.py
-    yolo_model = YOLO('best (6).pt') 
+    yolo_model = YOLO('best.pt') 
     print("YOLO model 'best.pt' loaded successfully.")
 except Exception as e:
     print(f"Error loading YOLO model 'best.pt': {e}")
@@ -34,7 +34,8 @@ except Exception as e:
 
 # [FLASK SETUP]
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Create the 'uploads' folder if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
