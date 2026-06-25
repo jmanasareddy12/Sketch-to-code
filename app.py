@@ -187,7 +187,5 @@ def upload_file():
     
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
-    # Runs the Flask app
-    # debug=True means the server will auto-reload when you save the file
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
