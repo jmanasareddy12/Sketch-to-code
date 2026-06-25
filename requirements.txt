@@ -1,6 +1,10 @@
 flask
-ultralytics
+gunicorn
 google-generativeai
 python-dotenv
-gunicorn
+ultralytics
 opencv-python-headless
+numpy
+pillow
+torch
+torchvision
