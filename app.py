@@ -26,7 +26,7 @@ else:
 # [MODEL LOADING] Load your trained YOLO model
 try:
     # Ensure 'best.pt' is in the same directory as app.py
-    yolo_model = YOLO('best.pt') 
+    yolo_model = YOLO('best (6).pt') 
     print("YOLO model 'best.pt' loaded successfully.")
 except Exception as e:
     print(f"Error loading YOLO model 'best.pt': {e}")
