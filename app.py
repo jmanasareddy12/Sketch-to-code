@@ -23,14 +23,20 @@ else:
     except Exception as e:
         print(f"Error configuring API key: {e}")
 
-# [MODEL LOADING] Load your trained YOLO model
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "best (6).pt")
+print("Current working directory:", os.getcwd())
+print("Project directory:", BASE_DIR)
+print("Files in project directory:", os.listdir(BASE_DIR))
+print("Looking for model at:", MODEL_PATH)
+print("Model exists:", os.path.exists(MODEL_PATH))
+
 try:
-    # Ensure 'best.pt' is in the same directory as app.py
-    yolo_model = YOLO('best (6).pt') 
-    print("YOLO model 'best.pt' loaded successfully.")
+    yolo_model = YOLO(MODEL_PATH)
+    print("YOLO model loaded successfully.")
 except Exception as e:
-    print(f"Error loading YOLO model 'best.pt': {e}")
-    print("Please make sure 'best.pt' is in the correct directory.")
+    print("Error loading YOLO model:", e)
+    yolo_model = None
 
 # [FLASK SETUP]
 app = Flask(__name__)
@@ -43,16 +49,12 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 # --- AI & DETECTION FUNCTIONS ---
 
 def get_sorted_detections(image_path):
-    """
-    Runs the YOLO model on an image and returns a list of detections,
-    sorted from top-to-bottom, then left-to-right.
-    """
-    print(f"Running detection on {image_path}...")
-    try:
-        results = yolo_model(image_path)
-    except Exception as e:
-        print(f"Error during YOLO model prediction: {e}")
+    if yolo_model is None:
+        print("YOLO model is not loaded.")
         return []
+
+    print(f"Running detection on {image_path}...")
+    results = yolo_model(image_path)
         
     detections = []
     for r in results:
