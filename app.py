@@ -29,18 +29,18 @@ else:
         print(f"Error configuring API key: {e}")
 
 # [MODEL LOADING] Load your trained YOLO model
-yolo_model = None
 try:
-    # Ensure 'best (6).pt' is in the same directory as app.py
-    yolo_model = YOLO('best (6).pt')
-    print("YOLO model loaded successfully.")
+    # Ensure 'best.pt' is in the same directory as app.py
+    yolo_model = YOLO('best (6).pt') 
+    print("YOLO model 'best.pt' loaded successfully.")
 except Exception as e:
-    print(f"Error loading YOLO model: {e}")
-    print("Please make sure the model file is in the correct directory.")
+    print(f"Error loading YOLO model 'best.pt': {e}")
+    print("Please make sure 'best.pt' is in the correct directory.")
 
 # [FLASK SETUP]
 app = Flask(__name__)
-UPLOAD_FOLDER = 'uploads'
+UPLOAD_FOLDER = os.path.join(os.getcwd(), "uploads")
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 # Create the 'uploads' folder if it doesn't exist
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
@@ -52,17 +52,13 @@ def get_sorted_detections(image_path):
     Runs the YOLO model on an image and returns a list of detections,
     sorted from top-to-bottom, then left-to-right.
     """
-    if yolo_model is None:
-        print("YOLO model is not loaded; skipping detection.")
-        return []
-
     print(f"Running detection on {image_path}...")
     try:
         results = yolo_model(image_path)
     except Exception as e:
         print(f"Error during YOLO model prediction: {e}")
         return []
-
+        
     detections = []
     for r in results:
         for box in r.boxes:
@@ -205,7 +201,5 @@ def upload_file():
 
     return redirect(url_for('index'))
 
-if __name__ == '__main__':
-    # Runs the Flask app
-    # debug=True means the server will auto-reload when you save the file
-    app.run(debug=True)
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=int(os.environ.get("PORT", 5000)))
