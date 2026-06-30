@@ -3,6 +3,7 @@ import json
 import re  # Used for safely parsing the AI's JSON response
 from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
+from huggingface_hub import hf_hub_download
 from ultralytics import YOLO
 
 # --- CONFIGURATION ---
@@ -31,7 +32,13 @@ else:
 # [MODEL LOADING] Load your trained YOLO model
 try:
     # Ensure 'best.pt' is in the same directory as app.py
-    yolo_model = YOLO('best (6).pt') 
+    
+    model_path = hf_hub_download(
+        repo_id="redpanda05/sketch2code-model",
+        filename="best.pt"
+    )
+
+    model = YOLO(model_path)
     print("YOLO model 'best.pt' loaded successfully.")
 except Exception as e:
     print(f"Error loading YOLO model 'best.pt': {e}")
@@ -54,7 +61,7 @@ def get_sorted_detections(image_path):
     """
     print(f"Running detection on {image_path}...")
     try:
-        results = yolo_model(image_path)
+        results = model_path(image_path)
     except Exception as e:
         print(f"Error during YOLO model prediction: {e}")
         return []
@@ -63,7 +70,7 @@ def get_sorted_detections(image_path):
     for r in results:
         for box in r.boxes:
             detections.append({
-                "class": yolo_model.names[int(box.cls[0])],
+                "class": model_path.names[int(box.cls[0])],
                 "confidence": round(float(box.conf[0]), 2),
                 # [x_center, y_center, width, height]
                 "box": [int(coord) for coord in box.xywh[0]]
